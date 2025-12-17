@@ -1,33 +1,42 @@
 import uiautomation as auto
 import time
 
-def type_text(text: str, interval: float = 0.05):
+def type_text(text: str, interval: float = 0.05) -> None:
     """
-    Types text character by character.
-    Using uiautomation.SendKeys.
+    Simulates typing a string of text on the keyboard.
+    
+    Use this for short strings into input fields. For large blocks of text,
+    consider using `paste` instead.
+
+    Args:
+        text (str): The text to type.
+        interval (float, optional): The delay in seconds between each keystroke. Defaults to 0.05.
     """
-    # SendKeys supports raw text, but need to be careful with special chars if they look like keys.
-    # uiautomation keys format is {KeyName}. 
-    # For plain text typing, simple string usually works unless it contains braces.
-    # If text has braces, we might need to escape or send chars individually.
     auto.SendKeys(text, interval=interval)
 
-def paste(text: str):
+def paste(text: str) -> None:
     """
-    Pastes text using the clipboard.
-    Native Windows clipboard set + Ctrl-V.
+    Pastes text at the current cursor location using the system clipboard.
+    
+    This is faster and more reliable than `type_text` for long content (like email bodies).
+    It simulates setting the clipboard and pressing Ctrl+V.
+
+    Args:
+        text (str): The text to paste.
     """
     auto.SetClipboardText(text)
     time.sleep(0.1)
     auto.SendKeys('{Ctrl}v')
 
-def press_key(key: str):
+def press_key(key: str) -> None:
     """
-    Presses a single key.
-    Examples: 'enter', 'tab', 'esc'.
-    Mapped to uiautomation format (Capitalized + braces).
+    Presses a single specific key on the keyboard.
+
+    Args:
+        key (str): The name of the key to press. 
+            Common keys: "enter", "tab", "esc", "backspace", "delete", "win", "space".
+            Arrow keys: "up", "down", "left", "right".
     """
-    # Simple mapping for common lowercase keys to uiautomation format
     key_map = {
         'enter': '{Enter}',
         'tab': '{Tab}',
@@ -45,24 +54,20 @@ def press_key(key: str):
     }
     
     formatted_key = key_map.get(key.lower(), key)
-    # If not in map, assume it's already correct or a simple character
     if not formatted_key.startswith('{') and len(formatted_key) > 1:
          formatted_key = f'{{{formatted_key.title()}}}'
          
     auto.SendKeys(formatted_key)
 
-def press_hotkey(*keys):
+def press_hotkey(*keys: str) -> None:
     """
-    Presses a combination of keys (e.g. 'ctrl', 'c').
-    uiautomation format: '{Ctrl}c'
+    Presses a key combination (hotkey).
+
+    Args:
+        *keys (str): A variable number of key names to press together.
+            Example: press_hotkey("ctrl", "c")
+            Example: press_hotkey("alt", "tab")
     """
-    # Logic to unnecessary since auto.SendKeys handles combos if formatted right.
-    # But usually hotkeys are sent as '{Modifier}Key'.
-    # Example user call: press_hotkey('ctrl', 'enter') -> '{Ctrl}{Enter}'?
-    # uiautomation typically holds modifiers if you do SendKeys('{Ctrl}(c)') or similar combiners
-    # or just simple '{Ctrl}c'.
-    
-    # Construct command string
     cmd = ""
     normal_key = ""
     
@@ -77,10 +82,8 @@ def press_hotkey(*keys):
         elif k in ['win']:
             cmd += "{Win}"
         else:
-            # The final non-modifier key
             normal_key = k
             
-    # For the normal key, check mapping
     key_map = {
         'enter': '{Enter}',
         'tab': '{Tab}'

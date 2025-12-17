@@ -5,11 +5,19 @@ from typing import Optional
 
 def capture_screen(filename: Optional[str] = None) -> str:
     """
-    Captures the entire screen using standard Python Imaging Library (Pillow).
-    Returns: A base64 encoded string of the PNG image (for LLM consumption).
-    if filename is provided, also saves to disk.
+    Captures an image of the current screen state.
+    
+    This function returns a Base64-encoded string of the screenshot, which can be
+    passed to Vision-enabled models (like Gemini Pro Vision) to "see" the desktop.
+    It can optionally save the image to a file for debugging.
+
+    Args:
+        filename (str, optional): If provided, the screenshot will be saved to this file path. 
+            Defaults to None.
+
+    Returns:
+        str: A Base64 encoded string representing the PNG screenshot image.
     """
-    # ImageGrab works on Windows and MacOS, standard in Pillow
     shot = ImageGrab.grab()
     
     if filename:
