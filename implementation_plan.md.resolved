@@ -1,0 +1,46 @@
+# Windows AI Automation Agent Plan (v6)
+
+Goal: Build a robust Windows AI agent. Phase 1 constructs the "Tools" (basic components). Phase 2 builds the "Agent" using Google ADK to wield these tools.
+
+## User Review Required
+> [!IMPORTANT]
+> **Platform Specificity**: The tools will primarily use `pywinauto` and `uiautomation` for robust object-based interaction on Windows. These library calls *will not work* on the MacOS environment I am writing in, so verification relies on your Windows machine.
+>
+> **Workflow Logic**: The workflow "Focus -> Find -> Click" is critical. `set_foreground` is the digital equivalent of you clicking the window's title bar to make sure it's active before typing.
+
+## Phase 1: Tooling Layer ("The Skills")
+We will build a modular `windows_tools` library.
+
+### Core Capabilities (Modules)
+*   `windows_tools.start_menu`: Search apps, Open Start.
+*   `windows_tools.window_mgmt`:
+    *   `set_foreground(app_name)`: **Critical**. Brings the requested window (e.g., "Mail") to the very front of the screen and gives it focus. This is like clicking on the app in the taskbar so that your keyboard commands go *to that app* and not somewhere else.
+    *   `list_windows()`: See what's open.
+*   `windows_tools.inspector`:
+    *   `find_element(name)`: Scans the active window for a button/field with this name (e.g., "New mail", "To", "Subject").
+*   `windows_tools.mouse`: `click(x, y)`, `scroll`, `right_click`.
+*   `windows_tools.keyboard`: `type_text`, `press_hotkey`, `paste`.
+*   `windows_tools.system`: `wait(seconds)`.
+*   `windows_tools.screenshot`: Vision capability.
+*   `windows_tools.app_mail`: Specific helpers.
+
+## Phase 2: Agent Layer ("The Brain")
+Google ADK Agent with this Tool Registry.
+
+### Workflow with New Tools
+1.  **Open**: `start_menu.search_app("Mail")`.
+2.  **Wait**: `system.wait(3)` (Give it time to launch).
+3.  **Focus**: `window_mgmt.set_foreground("Mail")` (Ensure Mail is the active window receiving input).
+4.  **Create Item**:
+    *   `inspector.find_element(name="New mail")` -> returns coordinates.
+    *   `mouse.click(coords)`.
+5.  **Fill Form**:
+    *   `inspector.find_element(name="To")` -> `mouse.click(...)` -> `keyboard.type_text(...)`.
+    *   `keyboard.press("tab")` (Move to Subject) -> `keyboard.type_text(...)`.
+6.  **Send**: `inspector.find_element(name="Send")` -> `mouse.click(...)`.
+
+## Proposed Files
+*   `windows_tools/` (All modules)
+*   `agent/adk_agent.py`
+*   `run_agent.py`
+*   `requirements.txt`
