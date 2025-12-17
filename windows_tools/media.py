@@ -1,25 +1,25 @@
-import pyautogui
+import uiautomation as auto
 
 def play_pause():
     """Toggles media play/pause."""
-    pyautogui.press('playpause')
+    auto.SendKeys('{MediaPlayPause}')
 
 def next_track():
     """Skips to next track."""
-    pyautogui.press('nexttrack')
+    auto.SendKeys('{MediaNextTrack}')
 
 def prev_track():
     """Goes to previous track."""
-    pyautogui.press('prevtrack')
+    auto.SendKeys('{MediaPrevTrack}')
 
 def volume_up():
     """Increases system volume."""
-    pyautogui.press('volumeup')
+    auto.SendKeys('{VolumeUp}')
 
 def volume_down():
     """Decreases system volume."""
-    pyautogui.press('volumedown')
+    auto.SendKeys('{VolumeDown}')
 
 def mute():
     """Toggles system mute."""
-    pyautogui.press('volumemute')
+    auto.SendKeys('{VolumeMute}')

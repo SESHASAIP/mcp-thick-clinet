@@ -1,15 +1,16 @@
-import pyautogui
+from PIL import ImageGrab
 import base64
 import io
 from typing import Optional
 
 def capture_screen(filename: Optional[str] = None) -> str:
     """
-    Captures the entire screen.
+    Captures the entire screen using standard Python Imaging Library (Pillow).
     Returns: A base64 encoded string of the PNG image (for LLM consumption).
     if filename is provided, also saves to disk.
     """
-    shot = pyautogui.screenshot()
+    # ImageGrab works on Windows and MacOS, standard in Pillow
+    shot = ImageGrab.grab()
     
     if filename:
         shot.save(filename)
